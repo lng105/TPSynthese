@@ -32,10 +32,12 @@ class Vue(ttk.Frame):
         self.controleur = p_controleur
         
     def btn_start(self):
+        self.controleur.start_system()
         self.label_actif.config(text="Système activé", fg="green")
         self.btn_valider.config(state=tk.NORMAL)
         
-    def btn_stop(self):
+    def btn_stop(self):    
+        self.controleur.stop_system()
         self.label_actif.config(text="Système desactivé", fg="red")
         self.btn_valider.config(state="disabled")
         

@@ -24,34 +24,59 @@ class Controleur:
     def __init__(self, p_modele, p_vue):
         self.modele = p_modele
         self.vue = p_vue
+        self.stop_event = threading.Event()
+        self.correct_code = "1234"  # Example correct code
+        self.input_code = ""
         
     def start_system(self):
         led_vert.on()
         led_rouge.off()
+        self.stop_event.clear()
         
         def motion_buzzer():
-            while True:
+            while not self.stop_event.is_set():
                 pir.wait_for_motion()
+                if self.stop_event.is_set():
+                    break
                 LCD1602.write(0, 0, "Enter code ")
                 buzzer.on()
-
+                while not self.stop_event.is_set():
+                    sleep(0.1)
+        
         def input_lcd():
             position = 11
             clavier = c.Keypad(touches, lignesGPIO, colonnesGPIO, LIGNES, COLONNES)
             clavier.setDebounceTime(50)
-            while True:
+            while not self.stop_event.is_set():
                 touche = clavier.getKey()
                 if touche != clavier.NULL:
-                    if position == 15:
-                        LCD1602.write(0, 2, "BOUTON VALIDER")
-                    LCD1602.write(position, 0, touche)
-                    position += 1
+                    if len(self.input_code) < 4:
+                        self.input_code += touche
+                        LCD1602.write(position, 0, touche)
+                        position += 1
             
-        threading.Thread(target = motion_buzzer, daemon = True).start()
-        threading.Thread(target = input_lcd, daemon = True).start()
+        self.buzzer_thread = threading.Thread(target=motion_buzzer, daemon=True)
+        self.lcd_thread = threading.Thread(target=input_lcd, daemon=True)
+        
+        self.buzzer_thread.start()
+        self.lcd_thread.start()
 
     def stop_system(self):
+        self.stop_event.set()
         led_vert.off()
         led_rouge.on()
         buzzer.off()
         LCD1602.clear()
+
+        self.buzzer_thread.join()
+        self.lcd_thread.join()
+        
+    def validate_code(self):
+        if self.input_code == self.correct_code:
+            self.input_code = ""
+            buzzer.off()
+            LCD1602.clear()
+            return True
+        else:
+            self.input_code = ""
+            return False

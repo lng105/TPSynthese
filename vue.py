@@ -11,7 +11,7 @@ class Vue(ttk.Frame):
         self.btn_arreterSyst=ttk.Button(self, text="Stop System", command=self.btn_stop)
         self.btn_arreterSyst.pack(pady=10)
         
-        self.btn_valider=tk.Button(self, text="Valider", state="disabled") 
+        self.btn_valider=tk.Button(self, text="Valider", state="disabled",command=self.btn_valider) 
         self.btn_valider.pack()
         
         self.journal_desc=tk.Label(self, text= "Journal d'events")
@@ -41,4 +41,5 @@ class Vue(ttk.Frame):
         self.label_actif.config(text="Système desactivé", fg="red")
         self.btn_valider.config(state="disabled")
         
-        
+    def btn_valider(self):
+        self.controleur.validate_code()

@@ -31,6 +31,9 @@ class Vue(ttk.Frame):
     def set_controleur(self, p_controleur):
         self.controleur = p_controleur
         
+    def disable_valider_button(self):
+        self.btn_valider.config(state="disabled")
+        
     def btn_start(self):
         self.controleur.start_system()
         self.label_actif.config(text="Système activé", fg="green")

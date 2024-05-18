@@ -1,6 +1,8 @@
-import LCD1602, threading
+import LCD1602, threading, datetime
 import RPi.GPIO as GPIO
 import KeypadGPIO as c
+import tkinter as tk
+from tkinter import ttk
 from gpiozero import LED, MotionSensor, Buzzer
 from time import sleep
 from threading import Timer
@@ -20,6 +22,7 @@ buzzer = Buzzer(23)
 led_rouge = LED(27)
 led_vert = LED(22)
 LCD1602.init(0x3f, 1)
+event_date = datetime.datetime.now()
 
 class Controleur:
     def __init__(self, p_modele, p_vue):
@@ -30,12 +33,18 @@ class Controleur:
         self.input_code = ""
         self.attempts = 0
         self.max_attempts = 3
+        
+    def update_journal_listbox(self, datetime_value, event_type):
+        date = datetime_value.strftime("%Y-%m-%d %H:%M:%S")
+        message = f"{date} - {event_type}"
+        self.vue.journal_listbox.insert(tk.END, message)
 
     def start_system(self):
         led_vert.on()
         led_rouge.off()
         self.stop_event.clear()
         self.attempts = 0
+        self.update_journal_listbox(event_date, "Activation du systeme d'alarme")
 
         def motion_buzzer():
             while not self.stop_event.is_set():
@@ -73,6 +82,7 @@ class Controleur:
         led_rouge.on()
         buzzer.off()
         LCD1602.clear()
+        self.update_journal_listbox(event_date, "Desactivation du systeme d'alarme")
 
         self.buzzer_thread.join()
         self.lcd_thread.join()
@@ -82,6 +92,8 @@ class Controleur:
             self.input_code = ""
             self.attempts = 0
             LCD1602.write(0, 1, "Acces Valide")
+            self.vue.disable_valider_button()
+            self.update_journal_listbox(event_date, "Acces valide du systeme d'alarme")
             buzzer.off()
             led_vert.off()
             for _ in range(3):
@@ -101,6 +113,7 @@ class Controleur:
             if self.attempts >= self.max_attempts:
                 self.vue.disable_valider_button()
                 LCD1602.clear()
+                self.update_journal_listbox(event_date, "Acces invalide du systeme d'alarme")
                 LCD1602.write(0, 0, "Access Bloque")
                 led_vert.off()
                 for _ in range(10):

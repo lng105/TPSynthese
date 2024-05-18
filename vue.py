@@ -17,7 +17,7 @@ class Vue(ttk.Frame):
         self.journal_desc=tk.Label(self, text= "Journal d'events")
         self.journal_desc.pack()
         
-        self.journal_listbox = tk.Listbox(self, height=10, width=30)
+        self.journal_listbox = tk.Listbox(self, height=10, width=45)
         self.journal_listbox.pack(pady=5)
         
         self.btn_sauvegarder=tk.Button(self, text="Sauvegarder en JSON")

@@ -13,7 +13,7 @@ class App(tk.Tk):
         modele = m.Modele(mouvement_detecte)
         
         vue = v.Vue(self)
-        vue.grid(row=0,column=0,padx=50,pady=50)
+        vue.grid(row=0,column=0,padx=75,pady=75)
         
         controleur = c.Controleur(modele, vue)
         

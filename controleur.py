@@ -44,7 +44,6 @@ class Controleur:
                     sleep(0.1)
         
         def input_lcd():
-            position = 11
             clavier = c.Keypad(touches, lignesGPIO, colonnesGPIO, LIGNES, COLONNES)
             clavier.setDebounceTime(50)
             while not self.stop_event.is_set():
@@ -52,8 +51,8 @@ class Controleur:
                 if touche != clavier.NULL:
                     if len(self.input_code) < 4:
                         self.input_code += touche
-                        LCD1602.write(position, 0, touche)
-                        position += 1
+                        LCD1602.clear()
+                        LCD1602.write(0, 0, "Enter code: " + self.input_code)
             
         self.buzzer_thread = threading.Thread(target=motion_buzzer, daemon=True)
         self.lcd_thread = threading.Thread(target=input_lcd, daemon=True)
@@ -79,4 +78,6 @@ class Controleur:
             return True
         else:
             self.input_code = ""
+            LCD1602.clear()
+            LCD1602.write(0, 0, "Try again: ")
             return False

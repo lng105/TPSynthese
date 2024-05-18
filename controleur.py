@@ -34,9 +34,10 @@ class Controleur:
         self.attempts = 0
         self.max_attempts = 3
         
-    def update_journal_listbox(self, datetime_value, event_type):
+    def update_journal_listbox(self, datetime_value, p_typeEvenement):
         date = datetime_value.strftime("%Y-%m-%d %H:%M:%S")
-        message = f"{date} - {event_type}"
+        self.modele.typeEvenement = p_typeEvenement
+        message = f"{date} - {p_typeEvenement}"
         self.vue.journal_listbox.insert(tk.END, message)
 
     def start_system(self):
@@ -125,3 +126,7 @@ class Controleur:
                 LCD1602.clear()
                 LCD1602.write(0, 0, f"Ressayer: {self.attempts}/{self.max_attempts}")
             return False
+        
+    def saveModele(self, p_typeEvenement):
+        self.modele.typeEvenement = p_typeEvenement
+        self.modele.saveFichier()

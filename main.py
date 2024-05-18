@@ -9,8 +9,7 @@ class App(tk.Tk):
         
         self.title("Programme Synthese")
         
-        mouvement_detecte = True
-        modele = m.Modele(mouvement_detecte)
+        modele = m.Modele("","")
         
         vue = v.Vue(self)
         vue.grid(row=0,column=0,padx=75,pady=75)

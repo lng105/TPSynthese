@@ -20,7 +20,7 @@ class Vue(ttk.Frame):
         self.journal_listbox = tk.Listbox(self, height=10, width=45)
         self.journal_listbox.pack(pady=5)
         
-        self.btn_sauvegarder=tk.Button(self, text="Sauvegarder en JSON")
+        self.btn_sauvegarder=tk.Button(self, text="Sauvegarder en JSON",command=self.btn_sauvegarder)
         self.btn_sauvegarder.pack()
         
         self.label_actif=tk.Label(self, text= "Systeme desactive")
@@ -46,3 +46,12 @@ class Vue(ttk.Frame):
         
     def btn_valider(self):
         self.controleur.validate_code()
+        
+    def btn_sauvegarder(self):
+        for i in range(self.journal_listbox.size()):
+            selected_item = self.journal_listbox.get(i)
+            event_parts = selected_item.split(" - ")
+            if len(event_parts) == 2:
+                p_typeEvenement = event_parts[1]
+                self.controleur.saveModele(p_typeEvenement)
+

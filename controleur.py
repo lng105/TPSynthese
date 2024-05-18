@@ -34,9 +34,10 @@ class Controleur:
         self.attempts = 0
         self.max_attempts = 3
         
-    def update_journal_listbox(self, datetime_value, p_typeEvenement):
+    def update_journal_listbox(self, datetime_value, p_typeEvenement,p_valeurEvenement = None):
         date = datetime_value.strftime("%Y-%m-%d %H:%M:%S")
         self.modele.typeEvenement = p_typeEvenement
+        self.modele.valeurEvenement = p_valeurEvenement
         message = f"{date} - {p_typeEvenement}"
         self.vue.journal_listbox.insert(tk.END, message)
 
@@ -52,6 +53,7 @@ class Controleur:
                 pir.wait_for_motion()
                 if self.stop_event.is_set():
                     break
+                valeurEvenement = pir.value 
                 LCD1602.write(0, 0, "Enter code ")
                 buzzer.on()
                 timer = Timer(2, buzzer.off)
@@ -127,6 +129,7 @@ class Controleur:
                 LCD1602.write(0, 0, f"Ressayer: {self.attempts}/{self.max_attempts}")
             return False
         
-    def saveModele(self, p_typeEvenement):
+    def saveModele(self, p_typeEvenement,p_valeurEvenement=None):
         self.modele.typeEvenement = p_typeEvenement
+        self.modele.valeurEvenement = p_valeurEvenement
         self.modele.saveFichier()

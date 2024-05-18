@@ -23,7 +23,7 @@ class Modele:
         self._valeurEvenement = value
     
     def __repr__(self):
-        return f"{self.dateHeureEvenement} - {self.valeurEvenement}"
+        return f"{self.dateHeureEvenement} - {self.typeEvenement}"
 
     def afficherMesure(self):
         print("Date:" + {self.dateHeureEvenement})
@@ -40,6 +40,7 @@ class Modele:
         data["resultats"].append({
             "dateHeureEvenement": self.dateHeureEvenement.strftime("%Y-%m-%d %H:%M:%S"),
             "typeEvenement": self.typeEvenement,
+            "valeurEvenement" : self.valeurEvenement
         })
         with open("resultats.json", 'w', encoding='utf-8') as file:
             json.dump(data, file, ensure_ascii=False, indent=4)

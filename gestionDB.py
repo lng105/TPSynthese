@@ -1,6 +1,5 @@
 import sqlite3
 
-connexion = ""
 nomDB = "mesure.db"
 table_mesure = "resultats"
 cle_no = "id"
@@ -12,64 +11,41 @@ def connexionDB():
     global connexion
     try:
         connexion = sqlite3.connect(nomDB)
-        print("Connexion reussie")
+        print("Connexion réussie")
+        return connexion
     except sqlite3.Error as error:
         print("Erreur de connexion", error)
-        
-def fermetureDB():
+        return None
+
+def fermetureDB(connexion):
     if connexion:
         connexion.close()
         print("Fermeture DB")
     else:
         print("Erreur de connexion")
-        
-def verifierExisteTable(table):
-    existe = False
-    cur = connexion.cursor
-    
-    sql_tableExiste = "SELECT count(name) FROM sqlite_master WHERE type='table' AND name='" + table + "'"
-    
+
+def creationTable(connexion):
+    tableMesure = f"CREATE TABLE IF NOT EXISTS {table_mesure} (" \
+                   f"{cle_no} INTEGER PRIMARY KEY UNIQUE, " \
+                   f"{cle_date} TEXT, " \
+                   f"{cle_event} TEXT, " \
+                   f"{cle_val} TEXT);"
     try:
-        cur.execute(sql_tableExiste)
-        
-        if cur.fetchone()[0]==1:
-            existe = True
-        else:
-            existe = False
+        connexion.execute(tableMesure)
+        print("Création table")
     except sqlite3.Error as error:
-        print("Erreur verification DB", error)
-    
-    return existe
-        
-def creationTable():
-    tableMesure = "CREATE TABLE " + table_mesure + " ( " \
-        + cle_no + " INTEGER PRIMARY KEY UNIQUE, " \
-        + cle_date + " TEXT, " \
-        + cle_event + " TEXT, " \
-        + cle_val + " TEXT);"
-        
-    connexionDB
-    
-    if verifierExisteTable(table_mesure):
-        print("Table existe")
-    else:
-        try:
-            connexion.execute(tableMesure)
-            print("Creation table")
-        except sqlite3 as error:
-            print("Erreur lors creation",error)
-            
-    fermetureDB
-    
+        print("Erreur lors de la création", error)
+
 def ajouterMesure(dateHeureEvenement, typeEvenement, valeurEvenement):
-    sql_insert  = "INSERT INTO " + table_mesure + " (" + cle_date + ", " + cle_event + ", " + cle_val + ") VALUES (?,?,?);"
-    
+    sql_insert = f"INSERT INTO {table_mesure} ({cle_date}, {cle_event}, {cle_val}) VALUES (?,?,?);"
+
     try:
         cur_insert = connexion.cursor()
         donnees_param = (dateHeureEvenement, typeEvenement, valeurEvenement)
         cur_insert.execute(sql_insert, donnees_param)
         connexion.commit()
-        print("Enregistrement ajoute dans table")
+        print("Enregistrement ajouté dans table")
         cur_insert.close()
     except sqlite3.Error as error:
         print("Erreur enregistrement", error)
+

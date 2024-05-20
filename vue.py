@@ -54,4 +54,3 @@ class Vue(ttk.Frame):
             if len(event_parts) == 2:
                 p_typeEvenement = event_parts[1]
                 self.controleur.saveModele(p_typeEvenement)
-

@@ -34,7 +34,7 @@ class Controleur:
         self.attempts = 0
         self.max_attempts = 3
         
-    def update_journal_listbox(self, datetime_value, p_typeEvenement,p_valeurEvenement = None):
+    def update_journal_listbox(self, datetime_value, p_typeEvenement,p_valeurEvenement):
         date = datetime_value.strftime("%Y-%m-%d %H:%M:%S")
         self.modele.typeEvenement = p_typeEvenement
         self.modele.valeurEvenement = p_valeurEvenement
@@ -46,14 +46,13 @@ class Controleur:
         led_rouge.off()
         self.stop_event.clear()
         self.attempts = 0
-        self.update_journal_listbox(event_date, "Activation du systeme d'alarme")
+        self.update_journal_listbox(event_date, "Activation du systeme d'alarme","Mouvement détecté")
 
         def motion_buzzer():
             while not self.stop_event.is_set():
                 pir.wait_for_motion()
                 if self.stop_event.is_set():
                     break
-                valeurEvenement = pir.value 
                 LCD1602.write(0, 0, "Enter code ")
                 buzzer.on()
                 timer = Timer(2, buzzer.off)
@@ -85,10 +84,13 @@ class Controleur:
         led_rouge.on()
         buzzer.off()
         LCD1602.clear()
-        self.update_journal_listbox(event_date, "Desactivation du systeme d'alarme")
+        self.update_journal_listbox(event_date, "Desactivation du systeme d'alarme","No mouvement")
 
-        self.buzzer_thread.join()
-        self.lcd_thread.join()
+        try:
+            self.buzzer_thread.join()
+            self.lcd_thread.join()
+        except AttributeError:
+            pass
 
     def validate_code(self):
         if self.input_code == self.correct_code:
@@ -96,7 +98,7 @@ class Controleur:
             self.attempts = 0
             LCD1602.write(0, 1, "Acces Valide")
             self.vue.disable_valider_button()
-            self.update_journal_listbox(event_date, "Acces valide du systeme d'alarme")
+            self.update_journal_listbox(event_date, "Acces valide du systeme d'alarme","No mouvement")
             buzzer.off()
             led_vert.off()
             for _ in range(3):
@@ -116,7 +118,7 @@ class Controleur:
             if self.attempts >= self.max_attempts:
                 self.vue.disable_valider_button()
                 LCD1602.clear()
-                self.update_journal_listbox(event_date, "Acces invalide du systeme d'alarme")
+                self.update_journal_listbox(event_date, "Acces invalide du systeme d'alarme","Mouvement détecté")
                 LCD1602.write(0, 0, "Access Bloque")
                 led_vert.off()
                 for _ in range(10):

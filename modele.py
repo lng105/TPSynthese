@@ -1,10 +1,11 @@
-import json, datetime
+import json, datetime, gestionDB
 
 class Modele:
     def __init__(self, p_typeEvenement, p_valeurEvenement):
         self.dateHeureEvenement = datetime.datetime.now()
         self.typeEvenement = p_typeEvenement
         self.valeurEvenement = p_valeurEvenement
+        self.db = gestionDB
 
     @property
     def typeEvenement(self):
@@ -47,11 +48,9 @@ class Modele:
             
     def saveToDB(self):
         self.db.connexionDB()
-        self.db.creationTable()
         self.db.ajouterMesure(
             self.dateHeureEvenement.strftime("%Y-%m-%d %H:%M:%S"),
             self.typeEvenement,
             self.valeurEvenement
         )
-        self.db.fermetureDB()  
 

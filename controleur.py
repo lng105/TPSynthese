@@ -133,6 +133,7 @@ class Controleur:
         self.modele.typeEvenement = p_typeEvenement
         self.modele.valeurEvenement = p_valeurEvenement
         self.modele.saveFichier()
+        self.modele.saveToDB()
         
     def set_input_code(self, code):
         self.input_code = code

@@ -44,3 +44,14 @@ class Modele:
         })
         with open("resultats.json", 'w', encoding='utf-8') as file:
             json.dump(data, file, ensure_ascii=False, indent=4)
+            
+    def saveToDB(self):
+        self.db.connexionDB()
+        self.db.creationTable()
+        self.db.ajouterMesure(
+            self.dateHeureEvenement.strftime("%Y-%m-%d %H:%M:%S"),
+            self.typeEvenement,
+            self.valeurEvenement
+        )
+        self.db.fermetureDB()  
+

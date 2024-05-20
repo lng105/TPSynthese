@@ -73,5 +73,3 @@ def ajouterMesure(dateHeureEvenement, typeEvenement, valeurEvenement):
         cur_insert.close()
     except sqlite3.Error as error:
         print("Erreur enregistrement", error)
-    finally:
-        fermetureDB
